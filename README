@@ -1,0 +1,51 @@
+######################
+### What is it ??? ###
+######################
+
+hobbit-hardware.sh is a hardware monitoring plugin for Hoobitmon/Xymon (http://hobbitmon.sourceforge.net/).
+It checks for temperatures, fan speeds and voltages on defined probes.
+It's fully GPL, so you can do whatever you want with, but it will keep GPL for ever.
+
+#####################################
+### What are the pre-requisites ? ###
+#####################################
+
+You first need to have a Hobbitmon/Xymon server running. This script is client-side script, so it must be installed by a Hobbitmon/Xymon client.
+It uses lm-sensors to monitor temperatures/voltages/fan speeds using defined probes.
+It uses hddtemp to monitor HDD temperatures, due to the lack of lm-sensors on some Linux based OS, you can use Smartmon Tools instead, or disable both tools.
+
+User running this script must have access to hddtemp command. It's highly recommended to allow this using 'sudo', and adding the following in your sudoers file :
+USER_RUNNING_SCRIPT   ALL=(ALL) NOPASSWD:PATH_TO_HDDTEMP
+
+It also needs nawk, bc and cut commands, they are available on most Linux based OS.
+
+###########################
+### How does it works ? ###
+###########################
+
+The script checks for probes accessible by lm-sensors, hddtemp or Smartmon tools. It reports results to Hobbitmon/Xymon server. According to the results, it'll tell monitoring server if those values are too high.
+The hobbit-hardware.conf file is where you set :
+-HDD to check temperatures from
+-LM-SENSOR, Smartmon tools and hddtemp usage
+-Temperatures thresolds for disk
+-Disk controller chipset
+
+LM-SENSORS includes several thresolds, please report to its configuration to define yours.
+
+####################################
+### How could I check activity ? ###
+####################################
+
+There is a debug mode included, first, you need to edit bb-mdstat.sh, and define the following regarding to your configuration :
+	CAT="/bin/cat"
+        AWK="/usr/bin/nawk"
+        GREP="/bin/grep"
+        RM="/bin/rm"
+        CUT="/usr/bin/cut"
+        DATE="/bin/date"
+        SED="/bin/sed"
+The default values are correct on a Debian system.
+Then, you juste have to run :
+hobbit-hardware.sh debug
+
+And you'll have the reports sent to monitoring server.
